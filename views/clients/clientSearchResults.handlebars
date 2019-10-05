@@ -11,11 +11,28 @@
         </tr>
         {{#each client}}
             <tr>
-                <td>{{firstName}} {{lastName}}</td>
-                <td>{{email}}</td>
-                <td>{{mobile}}</td>
-                <td>{{clientId}}</td>
-                <td><button class="btn navbar-color white" type="submit">Add Voucher</button></td>
+                <form action="/clients/clientSearchResults" method="post">
+                    <td>
+                        {{firstName}} {{lastName}}
+                        <input type="hidden" name="name" value="{{firstName}} {{lastName}}">
+                    </td>
+                    <td>
+                        {{email}}
+                        <input type="hidden" name="email" value="{{email}}">
+                    </td>
+                    <td>
+                        {{mobile}}
+                        <input type="hidden" name="mobile" value="{{mobile}}">
+                    </td>
+                    <td>
+                        {{clientId}}
+                        <input type="hidden" name="clientId" value="{{clientId}}">
+                    </td>
+                    <td>
+                        <input type="number" id="amount" name="amount" required>
+                        <button class="btn navbar-color white" type="submit">Add Voucher</button>
+                    </td>
+                </form>
             </tr>
         {{/each}}
     </table>
