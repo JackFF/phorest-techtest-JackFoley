@@ -1,0 +1,22 @@
+<div class="container">
+    <h3 class="text-centre">Client Search Results</h3>
+    <hr>
+    <table class="table table-bordered table-hover">
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Client ID</th>
+            <th>Add Voucher</th>
+        </tr>
+        {{#each client}}
+            <tr>
+                <td>{{firstName}} {{lastName}}</td>
+                <td>{{email}}</td>
+                <td>{{mobile}}</td>
+                <td>{{clientId}}</td>
+                <td><button class="btn navbar-color white" type="submit">Add Voucher</button></td>
+            </tr>
+        {{/each}}
+    </table>
+</div>
