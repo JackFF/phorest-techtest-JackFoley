@@ -20,9 +20,7 @@ router.get('/clientSearchResults', (req, res) => {
     const password = 'VMlRo/eh+Xd8M~l';
     const options = {
 
-    //?email=${email}&phone=${phone}
-
-    url: `http://api-gateway-dev.phorest.com/third-party-api-server/api/business/eTC3QY5W3p_HmGHezKfxJw/client`,
+    url: `http://api-gateway-dev.phorest.com/third-party-api-server/api/business/eTC3QY5W3p_HmGHezKfxJw/client?email=${email}&phone=${phone}`,
     auth: {
 
         user: username,
@@ -43,8 +41,18 @@ router.get('/clientSearchResults', (req, res) => {
             //  JSON client data
             const data = JSON.parse(body);
 
-            //  client results page 
-            res.render('clients/clientSearchResults', {client: data._embedded.clients});
+            //  Check if any clients are returned
+            if(data.page.size > 0) {
+
+                //  client results page 
+                res.render('clients/clientSearchResults', {client: data._embedded.clients});
+            }
+
+            else {
+
+                req.flash('error_msg', 'Client does not exist');
+                res.redirect('/clients/clientSearch');
+            }
         }
     });
 });
@@ -54,8 +62,7 @@ router.get('/addVoucher', (req, res) => {
 
     const clientId = req.query.clientId;
     const amount = req.query.amount;
-
-    console.log('Amount: ' + amount);
+    const name = req.query.name;
 
     //  Authentication settings
     const username = 'global/cloud@apiexamples.com';
@@ -69,6 +76,7 @@ router.get('/addVoucher', (req, res) => {
             password: password
         },
 
+        //  JSON payload for voucher
         json: {
 
             clientId: clientId,
@@ -77,7 +85,7 @@ router.get('/addVoucher', (req, res) => {
             issueDate: "2019-10-05T16:05:58.806Z",
             originalBalance: 133.15
         }
-    }, (err, res, body) => {
+    }, (err, response, body) => {
 
         if (err) {
 
@@ -86,15 +94,20 @@ router.get('/addVoucher', (req, res) => {
 
         else {
 
-            console.log('Res1: ' + res);
-            console.log('Body1: ' + body);
+            //  Check if voucher was successfully added
+            if(response.statusCode === 201) {
 
-            console.log('Res2: ' + JSON.stringify(res));
-            console.log('Body2: ' + JSON.stringify(body));
+                req.flash('success_msg', `€${amount} voucher successfully added to client: ${name}`);
+                res.redirect('/clients/clientSearch');
+            }
+
+            else {
+
+                req.flash('error_msg', `Unable to add voucher for client: ${name}`);
+                res.redirect('/clients/clientSearch');
+            }
         }
     });
-
-    res.render('clients/clientSearch');
 });
 
 //  Client search POST
@@ -112,8 +125,9 @@ router.post('/clientSearchResults', (req, res) => {
 
     const clientId = req.body.clientId;
     const amount = req.body.amount;
+    const name = req.body.name;
 
-    res.redirect(`/clients/addVoucher?clientId=${clientId}&amount=${amount}`);
+    res.redirect(`/clients/addVoucher?clientId=${clientId}&amount=${amount}&name=${name}`);
 });
 
 module.exports = router;
